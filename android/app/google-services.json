@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "190948415517",
+    "project_id": "whisper-docs-b61f4",
+    "storage_bucket": "whisper-docs-b61f4.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:190948415517:android:ff83cc32b87401ad6d4ef4",
+        "android_client_info": {
+          "package_name": "com.example.sagar_new_project"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBU9EHlchF5l7rpQIP2mqAUrqYG3RK38YI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
