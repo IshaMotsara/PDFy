@@ -5,9 +5,11 @@ import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:open_file/open_file.dart';
 import 'package:provider/provider.dart';
 import 'package:sagar_new_project/Provider/count_provider.dart';
 import 'package:sagar_new_project/Services/audio_extractor.dart';
+import 'package:sagar_new_project/Services/pdf_generator.dart';
 import 'package:sagar_new_project/Services/whisper_service.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -69,20 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       Radius.circular(100),
                     ),
                   ),
-                  child: ClipOval(
-                    child: provider.imageFile != null
-                        ? Image.file(
-                            provider.imageFile!,
-                            width: 170,
-                            height: 170,
-                            fit: BoxFit.cover,
-                          )
-                        : Image.network(
-                            'https://images.unsplash.com/photo-1506744038136-46273834b3fb',
-                            height: 170,
-                            fit: BoxFit.cover,
-                          ),
-                  ),
+                 
                 ),
                 Positioned(
                   bottom: 0,
@@ -107,59 +96,58 @@ class _HomeScreenState extends State<HomeScreen> {
               child: TextField(
                 controller: provider.imagecontroller,
                 decoration: const InputDecoration(
-                    labelText: 'Select Image',
+                    labelText: 'Select Pictures',
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(5)),
                     )),
               )),
-          ElevatedButton.icon(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.green,
-              foregroundColor: Colors.white,
-              // side: BorderSide(color: Colors.yellow, width: 5),
-              textStyle: const TextStyle(
-                color: Colors.white,
-                fontSize: 25,
-                fontStyle: FontStyle.normal,
-              ),
-              shape: const BeveledRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(10)),
-              ),
-            ),
-            icon: const Icon(Icons.image_outlined),
-            onPressed: () {
-              provider.processVideo();
-              provider.pickImage(ImageSource.gallery);
-              provider.uploadimage(context);
-            },
-            label: const Text("Pick Gallery"),
-          ),
-          ElevatedButton.icon(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.green,
-              foregroundColor: Colors.white,
-              // side: BorderSide(color: Colors.yellow, width: 5),
-              textStyle: const TextStyle(
-                color: Colors.white,
-                fontSize: 25,
-                fontStyle: FontStyle.normal,
-              ),
-              shape: const BeveledRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(10)),
-              ),
-            ),
-            icon: const Icon(Icons.camera_alt_outlined),
-            onPressed: () {
-              provider.processVideo();
-              provider.pickImage(ImageSource.camera);
-              provider.uploadimage(context);
-            },
-            label: const Text("Pick Camera"),
-          ),
+          
 
-          TextButton(onPressed: (){
-            provider.changeBool();
-          }, child: Text(provider.sagar? "Hit Sagar" : "Dont hit Sagar"))
+
+ElevatedButton(
+  onPressed: () async {
+    File? video = await provider.pickMediaFile();
+
+    if (video != null) {
+      print("🎥 Picked video file path: ${video.path}");
+      await provider.processAndUploadFile();
+
+      // Step 1: Generate PDF (this should return the PDF file path)
+      final pdfPath = await generateAndOpenPDF(
+        context,
+        'Generated Pdf',
+        provider.transcript ?? 'No transcription available',
+      );
+
+      // Step 2: Open PDF if it exists
+      if (pdfPath != null && pdfPath.isNotEmpty) {
+        final result = await OpenFile.open(pdfPath);
+        print("📂 OpenFile result: ${result.toString()} - ${result.message}");
+      } else {
+        print("❌ PDF path is null or empty");
+      }
+    }
+  },
+  child: const Text("Pick Video for Transcription"),
+),
+
+
+const SizedBox(height: 10),
+
+// Thumbnail Preview
+provider.videoThumbnail != null
+    ? Image.memory(
+        provider.videoThumbnail!,
+        width: 200,
+        height: 120,
+        fit: BoxFit.cover,
+      )
+    : Text("No video thumbnail"),
+
+
+
+
+          
         ],
       );
     })));

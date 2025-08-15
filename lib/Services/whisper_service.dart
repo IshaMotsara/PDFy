@@ -14,12 +14,19 @@ Future<String?> transcribeAudioWithOpenAI(File audioFile) async {
 
   final streamedResponse = await request.send();
   final response = await http.Response.fromStream(streamedResponse);
+  print("✅ Step 2 done: Whisper returned text length = }");
 
   if (response.statusCode == 200) {
     final data = jsonDecode(response.body);
-    return data['text'];
-  } else {
     print("❌ Whisper error: ${response.body}");
+    return data['text'];
+    
+  }
+  
+   else {
+    
     return null;
   }
+  
+  
 }
