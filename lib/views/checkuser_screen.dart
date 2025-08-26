@@ -1,17 +1,18 @@
 
+import 'package:PDFY/views/home_screen.dart';
+import 'package:PDFY/views/login_page_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:sagar_new_project/UI/login_page.dart';
-import 'package:sagar_new_project/UI/profilescreen.dart';
 
-class Checkuser extends StatefulWidget {
-  const Checkuser({super.key});
+
+class CheckUser extends StatefulWidget {
+  const CheckUser({super.key});
 
   @override
-  State<Checkuser> createState() => _CheckuserState();
+  State<CheckUser> createState() => _CheckuserState();
 }
 
-class _CheckuserState extends State<Checkuser> {
+class _CheckuserState extends State<CheckUser> {
   @override
   void initState() {
     super.initState();

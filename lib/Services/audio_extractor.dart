@@ -23,7 +23,7 @@ Future<File?> extractAudioFromVideo(File videoFile) async {
   final session = await FFmpegKit.execute(command);
   final returnCode = await session.getReturnCode();
 
-  if (returnCode != null && returnCode.isValueSuccess()) {
+  if (returnCode != null) {
     print("✅ Audio extraction successful.");
     final audioFile = File(audioPath);
     if (await audioFile.exists()) {

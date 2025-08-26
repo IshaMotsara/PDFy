@@ -1,13 +1,14 @@
 import 'dart:developer';
 import 'dart:io';
+import 'package:PDFY/models/whisper_api.dart';
+import 'package:PDFY/services/audio_extractor.dart';
+import 'package:PDFY/services/permission_handler.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:sagar_new_project/Services/audio_extractor.dart';
-import 'package:sagar_new_project/Services/permission_handler.dart';
-import 'package:sagar_new_project/Services/whisper_service.dart';
+
 import 'package:video_thumbnail/video_thumbnail.dart';
 
 class CountProvider with ChangeNotifier {
@@ -24,6 +25,40 @@ class CountProvider with ChangeNotifier {
   String? get transcript => _transcript;
   String? get uploadedFileUrl => _uploadedFileUrl;
 
+  
+  
+  String? videoPath;
+  String? pdfPath;
+
+  void reset() {
+   _pickedFile = null;        // ✅ clear previously picked file
+  _videoThumbnail = null;    // ✅ clear old thumbnail
+  videoPath = null;
+  pdfPath = null;
+  _isLoading = false;
+  _transcript = null;
+  _uploadedFileUrl = null;
+  imagecontroller.clear();   // ✅ clear input field too if needed
+  notifyListeners();
+  }
+
+  void setVideoPath(String path) {
+    videoPath = path;
+    notifyListeners();
+  }
+
+  void setTranscript(String text) {
+    _transcript = text;
+    notifyListeners();
+  }
+
+  void setPdfPath(String path) {
+    pdfPath = path;
+    notifyListeners();
+  }
+
+
+
   /// Step 1 - Pick a file (video or image) and create thumbnail if video
   Future<File?> pickMediaFile() async {
     bool granted = await requestVideoPermission();
@@ -33,6 +68,7 @@ class CountProvider with ChangeNotifier {
     }
 
     try {
+       reset();
       final result = await FilePicker.platform.pickFiles(
         type: FileType.video,
         
@@ -42,6 +78,7 @@ class CountProvider with ChangeNotifier {
         final path = result.files.single.path!;
         final file = File(path);
         _pickedFile = file;
+        setVideoPath(path);
 
         // ✅ If it's a video, generate thumbnail
         if (_isVideo(path)) {
@@ -75,14 +112,14 @@ class CountProvider with ChangeNotifier {
 
     print("🌀 Starting processAndUploadFile");
 
-    final file = await pickMediaFile();
-    if (file == null) {
+    
+    if (_pickedFile == null) {
       print("❌ No file selected");
       _isLoading = false;
       notifyListeners();
       return;
     }
-
+    final file = _pickedFile!;
     String? fileType = _isVideo(file.path) ? "video" : "image";
 
     // If it's a video, extract audio & transcribe
@@ -90,7 +127,7 @@ class CountProvider with ChangeNotifier {
       final audioFile = await extractAudioFromVideo(file);
       if (audioFile != null) {
         final text = await transcribeAudioWithOpenAI(audioFile);
-        _transcript = text;
+        setTranscript(text ?? "");
       }
     }
 
