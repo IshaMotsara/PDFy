@@ -33,11 +33,17 @@ flowchart TD
     E --> F[User views/downloads PDF]
 ```
 
+📸 Screenshots  
 
-📸 Screenshots
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/f216ab93-1dea-403e-8c73-d9efa95986a3" alt="Pick Video Page" width="250" />
+  &nbsp;&nbsp;&nbsp;&nbsp; <!-- adds spacing -->
+  <img src="https://github.com/user-attachments/assets/6310440b-106f-4e87-8c9b-3b79dce91852" alt="Login Page" width="250" />
+</p>
 
-![Pick Video Page](https://github.com/user-attachments/assets/f216ab93-1dea-403e-8c73-d9efa95986a3)
-![Login Page](https://github.com/user-attachments/assets/6310440b-106f-4e87-8c9b-3b79dce91852)
+
+
+
 
 
 
